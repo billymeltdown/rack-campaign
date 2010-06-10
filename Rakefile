@@ -10,23 +10,21 @@ AUTHOR = "Billy Gray"
 EMAIL = "wgray@zetetic.net"
 HOMEPAGE = "http://github.com/billymeltdown/rack-campaign"
 SUMMARY = "A Rack middleware/app for re-writing a simple URL into a Google analytics-tracked URL for ad campaigns"
+DESCRIPTION = "Allows you to route URLs like /c/get-widgets to http://widgets.com/promo?utm_campaign=fallwidgets, etc."
 
 spec = Gem::Specification.new do |s|
   s.name = GEM
   s.version = GEM_VERSION
   s.platform = Gem::Platform::RUBY
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README.md", "LICENSE"]
+  s.extra_rdoc_files = ["README.textile", "LICENSE"]
   s.summary = SUMMARY
   s.description = s.summary
   s.author = AUTHOR
   s.email = EMAIL
   s.homepage = HOMEPAGE
-
   s.add_dependency "rack"
-
   s.require_path = 'lib'
-  s.autorequire = GEM
   s.files = %w(LICENSE README.textile Rakefile) + Dir.glob("{lib}/**/*")
 end
 
