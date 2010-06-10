@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rack'
 require 'rack/request'
 require 'rack/utils'
+require 'yaml'
 
 module Rack
   module Zetetic
