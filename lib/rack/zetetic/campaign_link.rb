@@ -2,7 +2,6 @@ require 'rubygems'
 require 'rack'
 require 'rack/request'
 require 'rack/utils'
-# require 'ruby-debug'
 
 module Rack
   module Zetetic
