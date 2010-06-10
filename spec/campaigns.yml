@@ -1,0 +1,8 @@
+blogging-tempo:
+  url: http://www.zetetic.net/promotions/blogging-tempo
+  tokens:
+    campaign: blogging tempo
+    source: blog
+    medium: email
+    term: v1
+    content: textlink

@@ -4,15 +4,16 @@ require 'ruby-debug'
 
 describe "campaign_link" do
   
-  let(:campaigns) { File.open( 'campaigns.yml' ){ |yf| YAML::load( yf ) } }
+  CAMPAIGNS_FILE = File.dirname(__FILE__) + '/campaigns.yml'
+  
+  let(:campaigns) { File.open( CAMPAIGNS_FILE ){ |yf| YAML::load( yf ) } }
   let(:campaign_name) { campaigns.keys.first }
   let(:campaign) { campaigns[campaign_name] }
   let(:campaign_url) { campaigns[campaign_name]['url'] }
   
   def app
     @app ||= Rack::Builder.new do
-      use Rack::Zetetic::CampaignLink
-      run lambda { |env| [200, { 'Content-Type' => 'text/plain' }, ['Hello there, Zetetic'] ] }
+      run Rack::Zetetic::CampaignLink.new( CAMPAIGNS_FILE )
     end
   end
   
@@ -26,13 +27,11 @@ describe "campaign_link" do
     last_response['Location'].should =~ /#{campaign_url}/
   end
   
-  it "should attach utm variables to the redirect destination" do
+  it "should attach google utm variables to the redirect destination" do
     get "/#{campaign_name}"
-    campaign.keys.each do |key|
-      unless key == 'url' 
-        expected_str = Regexp.escape( "utm_#{key}=#{ Rack::Utils.escape(campaign[key]) }" )
-        last_response['Location'].should =~ /#{expected_str}/
-      end
+    campaign['tokens'].keys.each do |key|
+      expected_str = Regexp.escape( "utm_#{key}=#{ Rack::Utils.escape(campaign[key]) }" )
+      last_response['Location'].should =~ /#{expected_str}/
     end
   end
   
