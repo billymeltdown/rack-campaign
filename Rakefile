@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "rack-campaign"
-GEM_VERSION = "0.0.2"
+GEM_VERSION = "0.0.3"
 AUTHOR = "Billy Gray"
 EMAIL = "wgray@zetetic.net"
 HOMEPAGE = "http://github.com/billymeltdown/rack-campaign"
@@ -25,7 +25,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = HOMEPAGE
   s.add_dependency "rack"
   s.require_path = 'lib'
-  s.files = %w(LICENSE README.textile Rakefile) + Dir.glob("{lib}/**/*")
+  s.files = %w(LICENSE README.textile Rakefile) + Dir.glob("{lib}/**/*") + Dir.glob("examples/**/*")
 end
 
 task :default => :spec

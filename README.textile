@@ -48,7 +48,8 @@ blog-getstrip:
     source: blog
     medium: internets
     term: strip rocks!
-    content: example link</code></pre>
+    content: example link
+</code></pre>
     
 */www/campaigns/config.ru*:
 
@@ -81,7 +82,8 @@ run Rack::Zetetic::CampaignLink.new('/www/campaigns/campaigns.yml')
      proxy_pass http://campaigns;
      break;
     }
-  }</code></pre>
+  }
+</code></pre>
     
 */etc/init.d/unicorn_rack*:
 
