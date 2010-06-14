@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "rack-campaign"
-GEM_VERSION = "0.0.3"
+GEM_VERSION = "0.0.4"
 AUTHOR = "Billy Gray"
 EMAIL = "wgray@zetetic.net"
 HOMEPAGE = "http://github.com/billymeltdown/rack-campaign"
