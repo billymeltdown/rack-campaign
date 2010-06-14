@@ -1,17 +1,16 @@
-news-tempo:
-  url: http://keeptempo.com
+blog-rack-campaign:
+  url: http://dev.zetetic.net/blog/2010/06/11/introducing-rack-campaign
   tokens:
-    campaign: foopromo
-    source: newsletter
-    medium: email
-    content: textlink
+    campaign: rack-campaign
+    source: blog
+    medium: internets
+    content: example link
 
 blog-getstrip:
   url: http://getstrip.com
   tokens:
-    campaign: stripsync
+    campaign: rack-campaign
     source: blog
-    medium: intertubes
-    term: sync
-    content: textlink
-
+    medium: internets
+    term: strip rocks!
+    content: example link

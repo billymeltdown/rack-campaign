@@ -1,1 +1,135 @@
-More to come soon...
+h2. rack-campaign
+
+This is a "Rack":http://rack.rubyforge.org/ application (a gem is available by the same name) allowing you to maintain a "YAML":http://www.yaml.org/ file of short URLs that redirect to target URLs with a set of specified Google Analytics variables. It could be used to attach any number of parameters by any name to the query string.
+
+h2. What it does:
+
+*example promo url*:
+
+@http://zetetic.net/c/blog-rack-campaign@
+
+When the user visits this link, our web server sees the /c/ location and forwards it to rack-campaign, which looks up 'blog-rack-campaign' in the YAML file, and redirects the user to the full URL, with campaign variables attached.
+    
+*resulting full url*:
+
+@http://www.zetetic.net/blog/2010/06/11/introducing-rack-campaign?utm_campaign=rack-campaign&utm_source=blog&utm_medium=internets&utm_content=example%20link@
+
+The former is much better than the latter, especially for newsletters and other promotional links. And with a Rack application and a YAML file you can host it yourself, you don't need to rely on bit.ly or other URL shorteners, and you can "fix" any mistakes after publishing a URL simply by updating the YAML file and reloading Unicorn (taking advantage of zero down-time!) [ _You could use another Rack-server, we like Unicorn._ ]
+
+h2. Installation
+
+@gem install rack-campaign@
+
+The rest depends on how you intend to use it. 
+
+h2. Example Files
+
+In the @/examples@ directory of the source distribution are some sample configuration files. @config.ru@ is a @rackup@ file, initializing the rack-campaign middleware. You don't have to use rack-campaign as a stand-alone Rack application, you could instead use it in a middleware stack (although you might want to modify it's behavior). You probably want to use the map directive in that case to assign rack-campaign to a particular url path (we use /c).
+
+h2. Example Configuration
+
+This is how we use rack-campaign as a stand-alone Rack application. Nginx is our web-server, and we use Unicorn to serve up rack-campaign for the /c path:
+
+*/www/campaigns/campaigns.yml*:
+
+<pre><code>
+blog-rack-campaign:
+  url: http://dev.zetetic.net/blog/2010/06/11/introducing-rack-campaign
+  tokens:
+    campaign: rack-campaign
+    source: blog
+    medium: internets
+    content: example link
+
+blog-getstrip:
+  url: http://getstrip.com
+  tokens:
+    campaign: rack-campaign
+    source: blog
+    medium: internets
+    term: strip rocks!
+    content: example link</code></pre>
+    
+*/www/campaigns/config.ru*:
+
+<pre><code>
+# Rack-up application config
+
+require 'rubygems'
+require 'rack/zetetic/rack-campaign'
+
+run Rack::Zetetic::CampaignLink.new('/www/campaigns/campaigns.yml')
+</code></pre>
+
+*nginx.conf*:
+
+<pre><code>
+  # define upstream for campaign routing
+  upstream campaigns {
+    server unix:/www/campaigns/tmp/sockets/unicorn.sock;
+  }
+
+  location /c {
+    proxy_redirect     off;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_max_temp_file_size 0;
+
+    # forward everything else to the mongrel cluster
+    if (!-f $request_filename) {
+     proxy_pass http://campaigns;
+     break;
+    }
+  }</code></pre>
+    
+*/etc/init.d/unicorn_rack*:
+
+<pre><code>
+#!/bin/bash
+#
+# unicorn_rack       Startup script for Unicorn master processes
+#
+# chkconfig: - 85 15
+# description: unicorn is a magical process offering up workers to nginx
+#              
+
+USER=mongrel
+RETVAL=0
+APPS=( '/www/campaigns' )
+
+for APP in "${APPS[@]}"
+do
+  case "$1" in
+      start)
+        echo "Starting up $APP"
+        cd $APP
+        sudo -u $USER unicorn -c $APP/unicorn.rb -E production -D 
+        RETVAL=$?
+    ;;
+      stop)
+        echo "Stopping $APP"
+        PID=`ps auxw | grep 'unicorn master' | grep $APP | grep -v grep | awk '{ print $2 }'`
+        sudo -u $USER kill -INT $PID
+        RETVAL=$?
+    ;;
+      restart)
+      $0 stop
+      sleep 2
+      $0 start
+    ;;
+      reload)
+        echo "Re-loading $APPS"
+        PID=`ps auxw | grep 'unicorn master' | grep $APP | grep -v grep | awk '{ print $2 }'`
+        sudo -u $USER kill -HUP $PID
+        RETVAL=$?
+    ;;
+      *)
+        echo "Usage: unicorn_rack {start|stop|restart|reload}"
+        exit 1
+    ;;
+  esac      
+done
+
+exit $RETVAL
+</code></pre>

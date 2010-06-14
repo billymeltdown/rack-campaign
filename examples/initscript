@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# unicorn_rack       Startup script for Unicorn master processes
+#
+# chkconfig: - 85 15
+# description: unicorn is a magical process offering up workers to nginx
+#              
+
+USER=mongrel
+RETVAL=0
+APPS=( '/www/campaigns' )
+
+for APP in "${APPS[@]}"
+do
+  case "$1" in
+      start)
+        echo "Starting up $APP"
+        cd $APP
+        sudo -u $USER unicorn -c $APP/unicorn.rb -E production -D 
+        RETVAL=$?
+    ;;
+      stop)
+        echo "Stopping $APP"
+        PID=`ps auxw | grep 'unicorn master' | grep $APP | grep -v grep | awk '{ print $2 }'`
+        sudo -u $USER kill -INT $PID
+        RETVAL=$?
+    ;;
+      restart)
+      $0 stop
+      sleep 2
+      $0 start
+    ;;
+      reload)
+        echo "Re-loading $APPS"
+        PID=`ps auxw | grep 'unicorn master' | grep $APP | grep -v grep | awk '{ print $2 }'`
+        sudo -u $USER kill -HUP $PID
+        RETVAL=$?
+    ;;
+      *)
+        echo "Usage: unicorn_rack {start|stop|restart|reload}"
+        exit 1
+    ;;
+  esac      
+done
+
+exit $RETVAL
+
