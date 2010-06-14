@@ -2,7 +2,7 @@
 # Unicorn-specific config
 # Largely borrowed from the Github crew
 
-app_dir = '/www/campaign_link'
+app_dir = '/path/to/campaigns'
 worker_processes (ENV['RACK_ENV'] == 'production' ? 6 : 2)
 
 # Restart any workers that haven't responded in 30 seconds 

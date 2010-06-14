@@ -57,32 +57,32 @@ blog-getstrip:
 # Rack-up application config
 
 require 'rubygems'
-require 'rack/zetetic/rack-campaign'
+require 'rack/zetetic/campaign'
 
-run Rack::Zetetic::CampaignLink.new('/www/campaigns/campaigns.yml')
+run Rack::Zetetic::Campaign.new('/www/campaigns/campaigns.yml')
 </code></pre>
 
 *nginx.conf*:
 
 <pre><code>
-  # define upstream for campaign routing
-  upstream campaigns {
-    server unix:/www/campaigns/tmp/sockets/unicorn.sock;
-  }
+# define upstream for campaign routing
+upstream campaigns {
+  server unix:/www/campaigns/tmp/sockets/unicorn.sock;
+}
 
-  location /c {
-    proxy_redirect     off;
-    proxy_set_header   Host             $host;
-    proxy_set_header   X-Real-IP        $remote_addr;
-    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
-    proxy_max_temp_file_size 0;
+location /c {
+  proxy_redirect     off;
+  proxy_set_header   Host             $host;
+  proxy_set_header   X-Real-IP        $remote_addr;
+  proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+  proxy_max_temp_file_size 0;
 
-    # forward everything else to the mongrel cluster
-    if (!-f $request_filename) {
-     proxy_pass http://campaigns;
-     break;
-    }
+  # forward everything else to the mongrel cluster
+  if (!-f $request_filename) {
+   proxy_pass http://campaigns;
+   break;
   }
+}
 </code></pre>
     
 */etc/init.d/unicorn_rack*:

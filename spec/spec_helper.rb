@@ -1,6 +1,6 @@
 ENV['RACK_ENV'] ||= 'test'
 require 'rubygems'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'rack', 'zetetic', 'campaign_link')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'rack', 'zetetic', 'campaign')
 require 'spec'
 require 'rack/test'
 

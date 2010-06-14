@@ -6,7 +6,7 @@ require 'yaml'
 
 module Rack
   module Zetetic
-    class CampaignLink
+    class Campaign
       
       UTM_VARS = { 
         'campaign' => 'utm_campaign',

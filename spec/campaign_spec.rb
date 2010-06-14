@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 require 'pp'
 require 'ruby-debug'
 
-describe "campaign_link" do
+describe "campaign" do
   
   CAMPAIGNS_FILE = File.dirname(__FILE__) + '/campaigns.yml'
   
@@ -13,7 +13,7 @@ describe "campaign_link" do
   
   def app
     @app ||= Rack::Builder.new do
-      run Rack::Zetetic::CampaignLink.new( CAMPAIGNS_FILE )
+      run Rack::Zetetic::Campaign.new( CAMPAIGNS_FILE )
     end
   end
   

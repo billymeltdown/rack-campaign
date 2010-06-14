@@ -1,6 +1,4 @@
-# Rack application
-
+# Rack-up config
 require 'rubygems'
-require 'rack/zetetic/rack-campaign'
-
-run Rack::Zetetic::CampaignLink.new('/path/to/your/campaigns.yml')
+require 'rack/zetetic/campaign'
+run Rack::Zetetic::Campaign.new('/path/to/your/campaigns.yml')
